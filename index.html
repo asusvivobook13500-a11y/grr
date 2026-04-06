@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Champions League Timer</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0b0f1a, #000);
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin: 20px;
+  font-size: 32px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 0 30px rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(255,255,255,0.3);
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.timer {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.number {
+  font-size: 22px;
+  font-weight: bold;
+  color: #00eaff;
+}
+</style>
+</head>
+<body>
+
+<h1>Time Since Last Champions League Trophy</h1>
+
+<div class="container">
+
+  <div class="card">
+    <img class="logo" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg">
+    <h2>Real Madrid</h2>
+    <div class="timer" id="madrid"></div>
+  </div>
+
+  <div class="card">
+    <img class="logo" src="https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg">
+    <h2>Barcelona</h2>
+    <div class="timer" id="barca"></div>
+  </div>
+
+</div>
+
+<script>
+function calculateDiff(startDate) {
+  const now = new Date();
+
+  let years = now.getFullYear() - startDate.getFullYear();
+  let months = now.getMonth() - startDate.getMonth();
+  let days = now.getDate() - startDate.getDate();
+
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  const diffMs = now - startDate;
+  const totalSeconds = Math.floor(diffMs / 1000);
+
+  const seconds = totalSeconds % 60;
+  const minutes = Math.floor(totalSeconds / 60) % 60;
+  const hours = Math.floor(totalSeconds / 3600) % 24;
+  const weeks = Math.floor(days / 7);
+  const remainingDays = days % 7;
+
+  return { years, months, weeks, days: remainingDays, hours, minutes, seconds };
+}
+
+function updateTimer(id, date) {
+  const t = calculateDiff(date);
+
+  document.getElementById(id).innerHTML = `
+    <div><span class="number">${t.years}</span> Years</div>
+    <div><span class="number">${t.months}</span> Months</div>
+    <div><span class="number">${t.weeks}</span> Weeks</div>
+    <div><span class="number">${t.days}</span> Days</div>
+    <div><span class="number">${t.hours}</span> Hours</div>
+    <div><span class="number">${t.minutes}</span> Minutes</div>
+    <div><span class="number">${t.seconds}</span> Seconds</div>
+  `;
+}
+
+// Real Madrid: 2024-yil 1-iyun
+const madridDate = new Date(2024, 5, 1);
+// Barcelona: 2015-yil 6-iyun
+const barcaDate = new Date(2015, 5, 6);
+
+setInterval(() => {
+  updateTimer("madrid", madridDate);
+  updateTimer("barca", barcaDate);
+}, 1000);
+</script>
+
+</body>
+</html>
